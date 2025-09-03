@@ -1,0 +1,660 @@
+<index.html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patrick John Mortel - Portfolio</title>
+    <!-- Load Tailwind CSS from CDN and add custom color configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'moonlight-yellow': '#FDB813',
+                        'pale-lake': '#87c8eb',
+                        'beat-orange': '#FF5C00',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            background-image: url('background.gif');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            overflow-y: auto;
+        }
+
+        /* Styles for the new layered video background */
+        #background-video-2 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2; /* Place it behind the overlay and content, but on top of the body background image */
+        }
+        
+        .profile-pic {
+            background-image: url('headshot.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 9999px; /* This makes it a perfect circle */
+        }
+        
+        /* A semi-transparent overlay to ensure the text is readable over the GIF and video */
+        .overlay {
+            background-color: rgba(17, 24, 39, 0.7); /* A dark blue with 70% opacity */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 0;
+        }
+
+        /* Styles for the video overlay that plays on load */
+        #video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        #video-overlay.hidden {
+            display: none;
+        }
+        
+        #skip-intro-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 101;
+        }
+
+        #intro-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Custom styles for the certificate hover effect */
+        .certificate-image-container {
+            position: relative;
+        }
+
+        .certificate-image {
+            transition: transform 0.3s ease-in-out;
+            z-index: 10;
+        }
+
+        .certificate-image:hover {
+            transform: scale(2.5);
+            z-index: 20;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Hide the project details by default */
+        #project-details {
+            display: none;
+        }
+
+        /* Hide the portfolio image section by default */
+        #portfolio-images-container {
+            display: none;
+        }
+
+        /* Styles for the image hover effect */
+        .portfolio-image:hover {
+            transform: scale(1.1);
+            z-index: 10;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Styles for PDF thumbnails */
+        .pdf-thumbnail-container {
+            position: relative;
+            cursor: pointer;
+            width: 1.25in; /* 1.25 inches */
+            height: 1.25in; /* 1.25 inches */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .pdf-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .pdf-thumbnail:hover {
+            transform: scale(1.25);
+        }
+
+        /* Custom styles for the 3D embossed buttons with floating animation */
+        .embossed-btn {
+            position: relative;
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .embossed-btn:hover {
+            transform: translateY(-5px);
+            animation-play-state: paused;
+        }
+        
+        /* Specific colors and shadows for the buttons */
+        .portfolio-btn-style {
+            background-color: #3b82f6; /* Blue-500 from Tailwind */
+            box-shadow: 
+                -3px -3px 6px rgba(255, 255, 255, 0.2), /* Top-left light source */
+                3px 3px 6px rgba(0, 0, 0, 0.4),          /* Bottom-right shadow */
+                inset 2px 2px 4px rgba(255, 255, 255, 0.1), /* Inner light */
+                inset -2px -2px 4px rgba(0, 0, 0, 0.2);     /* Inner shadow */
+        }
+
+        .more-info-btn-style {
+            background-color: #FF5C00; /* beat-orange */
+            box-shadow: 
+                -3px -3px 6px rgba(255, 255, 255, 0.2), 
+                3px 3px 6px rgba(0, 0, 0, 0.4),
+                inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .amplify-btn-style {
+            background-color: #5850e0; /* A custom purple for AWS Amplify */
+            box-shadow: 
+                -3px -3px 6px rgba(255, 255, 255, 0.2), 
+                3px 3px 6px rgba(0, 0, 0, 0.4),
+                inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Floating animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Styles for the embedded iframe */
+        .iframe-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- New layered video background -->
+    <video id="background-video-2" autoplay loop muted playsinline>
+        <source src="background 2.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Video Overlay that plays on first load -->
+    <div id="video-overlay">
+        <video id="intro-video" muted autoplay playsinline>
+            <source src="openvid.mp4" type="video/mp4">
+            <source src="openvid.webm" type="video/webm">
+            <source src="openvid.ogg" type="video/ogg">
+            Your browser does not support the video tag.
+        </video>
+        <button id="skip-intro-btn" class="px-6 py-3 bg-white/30 text-white font-bold rounded-full shadow-lg hover:bg-white/50 transition-colors duration-300 backdrop-blur-sm">Skip Intro</button>
+    </div>
+
+    <!-- Main container for the entire page, providing padding and centering -->
+    <!-- The max-w-7xl class ensures the container doesn't get too wide on large screens -->
+    <div class="overlay">
+        <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+            <!-- Main content area with a white background and a two-column layout on medium screens and up -->
+            <!-- The md:flex class makes the two columns stack on small screens and align side-by-side on medium screens and above -->
+            <main class="bg-white/10 rounded-3xl overflow-hidden shadow-2xl md:flex">
+                <!-- Left Column: This section is for the main profile information -->
+                <aside class="w-full md:w-1/3 bg-blue-900/10 text-white p-8 md:p-12">
+                    <!-- Header section at the top of the left column -->
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center space-x-4">
+                            <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path>
+                            </svg>
+                            <p class="text-lg font-semibold">390</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                            </svg>
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Profile Photo and Name section -->
+                    <div class="flex flex-col items-center mb-8">
+                        <div class="profile-pic w-48 h-48 rounded-full ring-4 ring-blue-700 mb-6"></div>
+                        <h1 class="text-2xl font-bold tracking-tight text-white mb-2 text-center">PATRICK JOHN MORTEL</h1>
+                        <p class="text-sm text-gray-300 text-center">Senior Project Manager & Software Solutions Architect / Process Improvement Lead</p>
+                    </div>
+
+                    <!-- Contact Information section -->
+                    <div class="mb-8">
+                        <h2 class="text-xl font-bold text-gray-100 mb-4">Contacto</h2>
+                        <div class="space-y-2 text-sm text-gray-300">
+                            <div class="flex items-center space-x-2">
+                                <svg class="h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                                </svg>
+                                <span>patrickjohnmortel@yahoo.com</span>
+                            </div>
+                        </div>
+                        <!-- Portfolio and More Info buttons moved here -->
+                        <div class="flex flex-col space-y-4 mt-6">
+                            <button id="portfolio-btn" class="embossed-btn portfolio-btn-style px-6 py-3">Portafolio</button>
+                            <button id="more-info-btn" class="embossed-btn more-info-btn-style px-6 py-3">More info (automated link updates Google forms and Hubspot account)</button>
+                            <a href="https://main.d3kdmm9flgsdmi.amplifyapp.com/" target="_blank" class="embossed-btn amplify-btn-style px-6 py-3 text-center">
+                                AWS Amplify with Authentication (to do list app)
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Right Column: This section contains the resume details like education and experience -->
+                <section class="w-full md:w-2/3 bg-white/10 p-8 md:p-12">
+                    <!-- Portfolio Images Container (hidden by default) -->
+                    <!-- The grid layout is responsive, showing one column on mobile, two on small screens, and three on larger screens -->
+                    <div id="portfolio-images-container" class="mb-8">
+                        <h2 class="text-2xl font-bold text-moonlight-yellow mb-4">Project Portfolio</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                            <!-- Portfolio PDF 1 -->
+                            <div class="flex flex-col items-center">
+                                <a href="Project 1 -CALDERA EPMT.pdf" target="_blank">
+                                    <div class="pdf-thumbnail-container rounded-lg shadow-lg transform transition-transform duration-500 ease-in-out hover:scale-105">
+                                        <img src="Project 1.jpg" alt="PDF thumbnail for Project 1" class="pdf-thumbnail">
+                                    </div>
+                                </a>
+                                <p class="text-white text-xs text-center mt-2">Project 1 - CALDERA EPMT</p>
+                            </div>
+                            <!-- Portfolio PDF 2 -->
+                            <div class="flex flex-col items-center">
+                                <a href="Project 2 -CALDERA EPMT.pdf" target="_blank">
+                                    <div class="pdf-thumbnail-container rounded-lg shadow-lg transform transition-transform duration-500 ease-in-out hover:scale-105">
+                                        <img src="Project 2.jpg" alt="PDF thumbnail for Project 2" class="pdf-thumbnail">
+                                    </div>
+                                </a>
+                                <p class="text-white text-xs text-center mt-2">Project 2 - CALDERA EPMT</p>
+                            </div>
+                            <!-- Portfolio PDF 3 -->
+                            <div class="flex flex-col items-center">
+                                <a href="Project 3 -CALDERA EPMT Detailed Architecture.pdf" target="_blank">
+                                    <div class="pdf-thumbnail-container rounded-lg shadow-lg transform transition-transform duration-500 ease-in-out hover:scale-105">
+                                        <img src="Project 3.jpg" alt="PDF thumbnail for Project 3" class="pdf-thumbnail">
+                                    </div>
+                                </a>
+                                <p class="text-white text-xs text-center mt-2">Project 3 - Detailed Architecture</p>
+                            </div>
+                            <!-- New Project 4 entry -->
+                            <div class="flex flex-col items-center">
+                                <a href="Project 4 - C130 Aircraft Maintenance Architecture.pdf" target="_blank">
+                                    <div class="pdf-thumbnail-container rounded-lg shadow-lg transform transition-transform duration-500 ease-in-out hover:scale-105">
+                                        <img src="Project 4.jpg" alt="PDF thumbnail for Project 4" class="pdf-thumbnail">
+                                    </div>
+                                </a>
+                                <p class="text-white text-xs text-center mt-2">Project 4 - C130 Aircraft Maintenance Architecture</p>
+                            </div>
+                            <!-- Portfolio Image 4 (Using original image) -->
+                            <div class="overflow-hidden rounded-lg shadow-lg transform transition-transform duration-500 ease-in-out hover:scale-105">
+                                <img src="image_157f05.png" alt="An icon or logo related to a project" class="w-full h-auto portfolio-image transition-transform duration-500 ease-in-out">
+                            </div>
+                            <!-- Portfolio Image 5 (Using a duplicate for now) -->
+                            <div class="overflow-hidden rounded-lg shadow-lg transform transition-transform duration-500 ease-in-out hover:scale-105">
+                                <img src="image_ce20e4.jpg" alt="A screenshot of a project user interface" class="w-full h-auto portfolio-image transition-transform duration-500 ease-in-out">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Experience Section -->
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-moonlight-yellow mb-4">Professional Experience</h2>
+                        <div class="space-y-4">
+                            <!-- Senior Project Manager & Software Solutions Architect entry -->
+                            <div id="senior-pm">
+                                <p class="text-sm font-semibold text-pale-lake">Nov 2015 - Present</p>
+                                <p class="text-sm text-pale-lake">Senior Project Manager & Software Solutions Architect</p>
+                            </div>
+                            <!-- Project Details section -->
+                            <div id="project-details">
+                                <h3 class="text-lg font-bold text-white mt-4 mb-2">Project Details (2023-2025)</h3>
+                                <!-- Project 1 -->
+                                <div class="mb-4">
+                                    <p class="text-sm font-semibold text-pale-lake">1st Quarter 2025 - Project/Engagement Depot Maintenance Software / Project Management</p>
+                                    <p class="text-xs text-pale-lake">Duration: 6 months</p>
+                                    <p class="text-xs text-pale-lake">Responsibilities: Project Management / User Acceptance Testing</p>
+                                    <p class="text-xs text-pale-lake">Tools Used: Jira, Agile Scrum, AWS serverless architecture</p>
+                                    <p class="text-xs text-pale-lake">Project Description: Deployed a robust web and mobile app for a workload planning software to manage work cards, estimate workload schedules, identify required tools, equipment, technical data, and manpower requirements to effectively forecast workload planning and scheduling</p>
+                                </div>
+                                <!-- Project 2 -->
+                                <div class="mb-4">
+                                    <p class="text-sm font-semibold text-pale-lake">2022-2023 - Project/Engagement Worley Parsons - Project Management Enterprise</p>
+                                    <p class="text-xs text-pale-lake">Duration: 15 months</p>
+                                    <p class="text-xs text-pale-lake">Responsibilities: Project Management,</p>
+                                    <p class="text-xs text-pale-lake">Tools Used: Jira, Agile Scrum, Linux, Postgresql, Dotnet,</p>
+                                    <p class="text-xs text-pale-lake">Project Description: Design and Deploy a Project Management Tool with customizable reports, forms, workflows for Document Control, Supplier Document Control integrated to Engineering Management functions – Cost (Progress & Productivity), Schedule (Baselining’ and Forecasting Engineering activity dates Schedule interface for Actual dates).</p>
+                                </div>
+                                <!-- Project 3 -->
+                                <div class="mb-4">
+                                    <p class="text-sm font-semibold text-pale-lake">2nd Quarter 2024 - Project/Engagement Mestizo De Sangley Air Inc - Business Development</p>
+                                    <p class="text-xs text-pale-lake">Duration: 5 months</p>
+                                    <p class="text-xs text-pale-lake">Responsibilities: Project Management, Construction and Technology Implementation, Stakeholder Coordination. Risk Management</p>
+                                    <p class="text-xs text-pale-lake">Tools Used: Jira, Agile</p>
+                                    <p class="text-xs text-pale-lake">Project Description: Develop and Execute a Business Development plan for the following Operations Execution Plan, Ground Handling Services, Fuel Services.</p>
+                                </div>
+                                <!-- Project 4 -->
+                                <div class="mb-4">
+                                    <p class="text-sm font-semibold text-pale-lake">2018-2021 - Project/Engagement EPC Focus Malaysia - Senior Project Management</p>
+                                    <p class="text-xs text-pale-lake">Duration: 2 ½ years</p>
+                                    <p class="text-xs text-pale-lake">Responsibilities: Project Management</p>
+                                    <p class="text-xs text-pale-lake">Tools Used: Jira, Agile, Scrum</p>
+                                    <p class="text-xs text-pale-lake">Project Description: Applied Agile Scrum Methodology in the Management of the CALDERA EPMT development team, responsible for the comprehensive lifecycle of the</p>
+                                </div>
+                            </div>
+                            <!-- Other Experience entries -->
+                            <div>
+                                <p class="text-sm font-semibold text-pale-lake">Aug 2010 - Oct 2015</p>
+                                <p class="text-sm text-pale-lake">APAC Lead Program Manager & Solutions Software Architect</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-pale-lake">May 2005 - Jul 2010</p>
+                                <p class="text-sm text-pale-lake">Lotus Notes Application Developer & Construction Management Associate</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Education Section -->
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-moonlight-yellow mb-4">Education</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-sm font-semibold text-moonlight-yellow">A Masters Degree in Life</p>
+                                <p class="text-sm text-pale-lake">University of Ups and Downs, present</p>
+                                <p class="text-xs text-pale-lake italic">"If a man empities his purse into his head, no man can take it away from him. An investment in knowledge always pays the best interest."</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-moonlight-yellow">Degree in Lifebachelor of Science in Business Management</p>
+                                <p class="text-sm text-pale-lake">De La Salle University - College of Saint Benilde, 2001</p>
+                                <p class="text-xs text-pale-lake">Specialized in Business Outsourcing. Thesis: "Leveraging Cost Effective Skills from the other side of the World"</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills and Certifications Section -->
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-moonlight-yellow mb-4">Skills and Certifications</h2>
+                        
+                        <!-- Generative AI -->
+                        <h3 class="text-xl font-bold text-beat-orange mb-4">Generative AI</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="aws_genai_art.jpg" alt="AWS - Introduction to Generative AI" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">AWS - Introduction to Generative AI - Art of the Possible</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="aws_genai_org.jpg" alt="AWS - Building a Generative AI Ready Organization" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">AWS - Building a Generative AI Ready Organization</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="aws_genai_plan.jpg" alt="AWS - Generative AI Learning Plan for Decision Makers" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">AWS - Generative AI Learning Plan for Decision Makers</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="aws_genai_practitioner.jpg" alt="AWS - Generative AI Practitioner" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">AWS - Generative AI Practitioner</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="aws_genai_project.jpg" alt="AWS - Planning a Generative AI Project" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">AWS - Planning a Generative AI Project</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="clickup_ai_knowledge.jpg" alt="ClickUp AI Knowledge Certification" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">ClickUp AI Knowledge Certification</p>
+                            </div>
+                             <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="aws_well_architected.jpg" alt="AWS Well Architected Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-beat-orange">AWS Well Architected Certificate</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cloud & AWS -->
+                        <h3 class="text-xl font-bold text-beat-orange mb-4 mt-6">Cloud & AWS</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="aws_job_roles.jpg" alt="AWS Job Roles in the Cloud Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">AWS Job Roles in the Cloud Certificate</p>
+                            </div>
+                        </div>
+
+                        <!-- Project Management & Agile -->
+                        <h3 class="text-xl font-bold text-beat-orange mb-4 mt-6">Project Management & Agile</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="ibm_agile_fundamental.jpg" alt="IBM Agile Fundamentals" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">IBM Agile Fundamentals</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="agile_operations.jpg" alt="Agile Operations" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">Agile Operations</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="clickup_capacity.jpg" alt="ClickUp Capacity Planning Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">Click Up Capacity Planning Certificate</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="clickup_chat.jpg" alt="ClickUp Chat Module Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">Click Up Chat Module Certificate</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="clickup_expert.jpg" alt="ClickUp Expert Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">ClickUp Expert Certificate</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="clickup_guest.jpg" alt="ClickUp for Guests Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">Click Up for Guests Certificate</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="clickup_admin.jpg" alt="ClickUp Admin Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">ClickUp Admin Certificate</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="clickup_expert_2.jpg" alt="ClickUp Expert Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">ClickUp Expert Certificate</p>
+                            </div>
+                        </div>
+
+                        <!-- Data, Sales & Automation -->
+                        <h3 class="text-xl font-bold text-beat-orange mb-4 mt-6">Data, Sales & Automation</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="ibm_data_analytics.jpg" alt="IBM Data Analytics Fundamentals" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">IBM Data Analytics Fundamentals</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="hubspot_sales_hub.jpg" alt="HubSpot Sales Hub Software Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">HubSpot Sales Hub Software Certificate</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="hubspot_sale.jpg" alt="HubSpot Sales Software Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">HubSpot Sales Software Certificate</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="hubspot_service_hub.jpg" alt="HubSpot Service Hub Software Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">HubSpot Service Hub Software Certificate</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="hubspot_service_hub.jpg" alt="HubSpot Service Hub Software Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">HubSpot Service Hub Software Certificate</p>
+                            </div>
+                            <!-- Certificate Item -->
+                            <div class="flex flex-col items-center text-center">
+                                <div class="certificate-image-container mb-2">
+                                    <img src="zapier.jpg" alt="Zapier Certificate" class="certificate-image w-full h-full object-contain rounded-lg">
+                                </div>
+                                <p class="text-sm font-semibold text-beat-orange">Zapier Certificate</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Coda iframe container -->
+                    <div class="iframe-container">
+                        <iframe src="https://coda.io/embed/UW3_H6UZzh/_su699Cbi?viewMode=embedplay" width="900" height="500" style="max-width: 100%;" allow="fullscreen"></iframe>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const videoOverlay = document.getElementById('video-overlay');
+            const introVideo = document.getElementById('intro-video');
+            const skipIntroBtn = document.getElementById('skip-intro-btn');
+
+            // Function to skip the intro video and show the main content
+            const skipIntro = () => {
+                introVideo.pause();
+                videoOverlay.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            };
+
+            // Play the video and hide the overlay when it ends
+            videoOverlay.classList.remove('hidden');
+            introVideo.play();
+            
+            // Event listener for the "Skip Intro" button
+            skipIntroBtn.addEventListener('click', skipIntro);
+
+            // Hide the video overlay if it fails to load or play
+            introVideo.onerror = skipIntro;
+            introVideo.onended = skipIntro;
+
+            const seniorPmElement = document.getElementById('senior-pm');
+            const projectDetailsElement = document.getElementById('project-details');
+            const portfolioBtn = document.getElementById('portfolio-btn');
+            const moreInfoBtn = document.getElementById('more-info-btn');
+            const portfolioImagesContainer = document.getElementById('portfolio-images-container');
+
+            seniorPmElement.addEventListener('mouseenter', () => {
+                projectDetailsElement.style.display = 'block';
+            });
+            seniorPmElement.addEventListener('mouseleave', () => {
+                projectDetailsElement.style.display = 'none';
+            });
+
+            // "More info" button toggle function
+            moreInfoBtn.addEventListener('click', () => {
+                window.open('https://forms.gle/qccHcorrpngwC8Za6', '_blank');
+            });
+
+            // "Portfolio" button toggle function to show/hide the images
+            portfolioBtn.addEventListener('click', () => {
+                if (portfolioImagesContainer.style.display === 'grid') {
+                    portfolioImagesContainer.style.display = 'none';
+                } else {
+                    portfolioImagesContainer.style.display = 'grid';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
